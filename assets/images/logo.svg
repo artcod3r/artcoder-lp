@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 60" width="300" height="60">
+  <style>
+    .brand-text { font-family: 'Outfit', 'Inter', system-ui, sans-serif; font-weight: 800; font-size: 28px; fill: #F8FAFC; letter-spacing: 1px; }
+    .brand-code { font-family: 'Fira Code', 'Courier New', monospace; font-weight: 700; font-size: 28px; fill: #FF6B00; }
+  </style>
+  <text x="10" y="40" class="brand-text">ARTCODER <tspan class="brand-code">&lt;/&gt;</tspan></text>
+</svg>
