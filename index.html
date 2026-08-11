@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artcoder Sistemas e Tecnologia | Engenharia de Software</title>
+  <meta name="description" content="Engenharia de software, microsserviços e soluções mobile de alta performance. Desenvolvedora da plataforma AirsoftHub.">
+  <link rel="icon" href="assets/images/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        ARTCODER <span>&lt;/&gt;</span>
+      </a>
+      <button class="mobile-toggle" id="menu-toggle" aria-label="Abrir Menu">☰</button>
+      <ul class="nav-links" id="nav-menu">
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#produtos">Produtos</a></li>
+        <li><a href="#suporte">Suporte</a></li>
+        <li><a href="#legal">Legal</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="container hero-content">
+      <span class="hero-badge">Engenharia &amp; Inovação Digital</span>
+      <h1 class="hero-title">Engenharia de Software e Soluções Digitais de Alta Performance</h1>
+      <p class="hero-subtitle">Construímos plataformas escaláveis, APIs robustas e experiências mobile intuitivas. Do conceito ao deploy.</p>
+      <div class="hero-actions">
+        <a href="#produtos" class="btn btn-primary">Conheça Nossos Produtos</a>
+        <a href="#suporte" class="btn btn-secondary">Falar com Suporte</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO SOBRE -->
+  <section id="sobre">
+    <div class="container">
+      <h2 class="section-title">Especialistas em Arquitetura &amp; Desenvolvimento</h2>
+      <p class="section-subtitle">A Artcoder Sistemas e Tecnologia é uma empresa focada na criação e manutenção de produtos digitais de alta disponibilidade.</p>
+
+      <div class="cards-grid">
+        <div class="card">
+          <h3 style="color: var(--secondary-orange); margin-bottom: 12px; font-family: var(--font-heading);">Cloud Infrastructure</h3>
+          <p style="color: var(--text-secondary); font-size: 15px;">Desenvolvimento e gestão de arquiteturas em nuvem escaláveis, resilientes e preparadas para alto tráfego.</p>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--secondary-orange); margin-bottom: 12px; font-family: var(--font-heading);">Microsserviços &amp; APIs</h3>
+          <p style="color: var(--text-secondary); font-size: 15px;">Construção de APIs de alta velocidade e microsserviços desacoplados garantindo disponibilidade.</p>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--secondary-orange); margin-bottom: 12px; font-family: var(--font-heading);">Mobile &amp; Geolocalização</h3>
+          <p style="color: var(--text-secondary); font-size: 15px;">Aplicativos nativos e híbridos orientados a geolocalização e engajamento em tempo real.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO PRODUTOS -->
+  <section id="produtos" style="background: rgba(30, 41, 59, 0.3);">
+    <div class="container">
+      <h2 class="section-title">Soluções em Destaque</h2>
+      <p class="section-subtitle">Produtos e aplicativos desenvolvidos e mantidos pela Artcoder.</p>
+
+      <div class="product-card">
+        <div class="product-info">
+          <span class="product-tag">Mobile App (iOS / Android)</span>
+          <h3 class="product-title">AirsoftHub</h3>
+          <p class="product-desc">Plataforma de gestão de comunidades, agendamento de partidas e descoberta de campos de Airsoft com busca por geolocalização em tempo real.</p>
+          <a href="https://airsofthub.app" target="_blank" rel="noopener" class="btn btn-primary">Visitar airsofthub.app ➔</a>
+        </div>
+        <div class="product-visual">
+          <img src="assets/images/airsofthub-icon.svg" alt="AirsoftHub App" class="product-img" width="180">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO SUPORTE -->
+  <section id="suporte">
+    <div class="container">
+      <div style="max-width: 640px; margin: 0 auto;">
+        <h2 class="section-title" style="text-align: center;">Canal de Atendimento e Suporte</h2>
+        <p class="section-subtitle" style="text-align: center; margin-bottom: 32px;">Precisa de suporte técnico em relação aos nossos aplicativos ou soluções? Nossa equipe está à disposição.</p>
+
+        <div class="card">
+          <form id="form-suporte">
+            <div class="form-group">
+              <label class="form-label" for="nome">Nome Completo</label>
+              <input type="text" id="nome" class="form-control" placeholder="Seu nome" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">E-mail de Contato</label>
+              <input type="email" id="email" class="form-control" placeholder="seu@email.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="assunto">Assunto</label>
+              <select id="assunto" class="form-control" required>
+                <option value="Suporte AirsoftHub">Suporte - AirsoftHub App</option>
+                <option value="Dúvidas Gerais">Dúvidas Gerais / Institucional</option>
+                <option value="Parcerias">Parcerias e Negócios</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="mensagem">Mensagem</label>
+              <textarea id="mensagem" class="form-control" placeholder="Descreva sua solicitação..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Mensagem</button>
+          </form>
+          <div style="margin-top: 20px; font-size: 13px; color: var(--text-secondary); text-align: center;">
+            E-mail oficial: <strong>artcoder@artcoder.com.br</strong> | Resposta em até 24h úteis.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER JURÍDICO (STORE COMPLIANT) -->
+  <footer class="footer" id="legal">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-company">
+          <a href="index.html" class="logo">
+            ARTCODER <span>&lt;/&gt;</span>
+          </a>
+          <p>ARTCODER SISTEMAS E TECNOLOGIA<br>Curitiba - PR, Brasil</p>
+          <p style="margin-top: 8px;">Contato: artcoder@artcoder.com.br</p>
+        </div>
+        <div>
+          <h4 class="footer-title">Navegação</h4>
+          <ul class="footer-links">
+            <li><a href="#sobre">Sobre Nós</a></li>
+            <li><a href="#produtos">Produtos</a></li>
+            <li><a href="#suporte">Suporte Técnico</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">Links Legais &amp; Lojas</h4>
+          <ul class="footer-links">
+            <li><a href="privacidade.html">Política de Privacidade</a></li>
+            <li><a href="termos.html">Termos de Uso</a></li>
+            <li><a href="exclusao-de-conta.html">Exclusão de Conta e Dados</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 Artcoder Sistemas e Tecnologia. Todos os direitos reservados.</div>
+        <div>Desenvolvido com foco em alta disponibilidade e performance.</div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast">Mensagem enviada com sucesso!</div>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
