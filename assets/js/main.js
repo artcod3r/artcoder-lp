@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Helper para envio via API Serverless do Resend
   async function sendEmailNotification(payload) {
     try {
-      const response = await fetch('/api/send', {
+      const response = await fetch('https://api.artcoder.com.br/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
