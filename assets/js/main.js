@@ -32,29 +32,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4000);
   }
 
-  // Helper for sending notifications via Resend endpoint / API
+  // Helper para envio via API Serverless do Resend
   async function sendEmailNotification(payload) {
-    const emailBody = {
-      from: 'Artcoder Web <onboarding@resend.dev>',
-      to: ['artcoder@artcoder.com.br'],
-      subject: payload.subject,
-      html: `
-        <div style="font-family: Arial, sans-serif; background: #0F172A; color: #F8FAFC; padding: 24px; border-radius: 8px;">
-          <h2 style="color: #FF6B00;">${payload.title}</h2>
-          <p><strong>Nome:</strong> ${payload.name}</p>
-          <p><strong>E-mail:</strong> ${payload.email}</p>
-          ${payload.extra ? `<p><strong>Detalhes:</strong> ${payload.extra}</p>` : ''}
-          <p><strong>Mensagem:</strong></p>
-          <blockquote style="background: #1E293B; padding: 12px; border-left: 4px solid #FF6B00;">${payload.message}</blockquote>
-        </div>
-      `
-    };
-
     try {
-      console.log('Sending payload to Resend:', emailBody);
-      return { success: true };
+      const response = await fetch('/api/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        return { success: true };
+      } else {
+        return { success: false };
+      }
     } catch (err) {
-      console.error('Resend dispatch error:', err);
+      console.error('Erro de rede/servidor:', err);
       return { success: false };
     }
   }
