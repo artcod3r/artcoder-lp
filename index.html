@@ -79,17 +79,61 @@
       <h2 class="section-title">Soluções em Destaque</h2>
       <p class="section-subtitle">Produtos e aplicativos desenvolvidos e mantidos pela Artcoder.</p>
 
-      <div class="product-card">
-        <div class="product-info">
-          <span class="product-tag">Mobile App (iOS / Android)</span>
-          <h3 class="product-title">AirsoftHub</h3>
-          <p class="product-desc">Plataforma de gestão de comunidades, agendamento de partidas e descoberta de campos de
-            Airsoft com busca por geolocalização em tempo real.</p>
-          <a href="https://airsofthub.app" target="_blank" rel="noopener" class="btn btn-primary">Visitar airsofthub.app
-            ➔</a>
+      <div class="carousel-container" id="products-carousel" aria-roledescription="carousel" aria-label="Soluções Artcoder">
+        <!-- Botão Anterior -->
+        <button class="carousel-btn carousel-prev" id="carousel-prev" aria-label="Produto anterior" title="Anterior">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+
+        <!-- Trilho do Carrossel -->
+        <div class="carousel-track-wrapper">
+          <div class="carousel-track" id="carousel-track">
+            <!-- Slide 1: AirsoftHub -->
+            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="1 de 2">
+              <div class="product-card">
+                <div class="product-info">
+                  <span class="product-tag">Mobile App (iOS / Android)</span>
+                  <h3 class="product-title">AirsoftHub</h3>
+                  <p class="product-desc">Plataforma de gestão de comunidades, agendamento de partidas e descoberta de campos de
+                    Airsoft com busca por geolocalização em tempo real.</p>
+                  <a href="https://airsofthub.app" target="_blank" rel="noopener" class="btn btn-primary">Visitar airsofthub.app ➔</a>
+                </div>
+                <div class="product-visual">
+                  <img src="assets/images/airsofthub-icon.svg" alt="AirsoftHub App" class="product-img" width="190" height="190">
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2: ProntoOrcei -->
+            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="2 de 2">
+              <div class="product-card">
+                <div class="product-info">
+                  <span class="product-tag">Mobile App (iOS / Android)</span>
+                  <h3 class="product-title">ProntoOrcei</h3>
+                  <p class="product-desc">Aplicativo utilitário para autônomos e MEI gerarem orçamentos e recibos profissionais em PDF com assinatura digital, chave Pix e envio instantâneo via WhatsApp.</p>
+                  <a href="https://www.prontoorcei.com.br" target="_blank" rel="noopener" class="btn btn-primary">Visitar prontoorcei.com.br ➔</a>
+                </div>
+                <div class="product-visual">
+                  <img src="assets/images/logo_prontoorcei_wo_bg.svg" alt="ProntoOrcei App" class="product-img" width="190" height="190">
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="product-visual">
-          <img src="assets/images/airsofthub-icon.svg" alt="AirsoftHub App" class="product-img" width="180">
+
+        <!-- Botão Próximo -->
+        <button class="carousel-btn carousel-next" id="carousel-next" aria-label="Próximo produto" title="Próximo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+
+        <!-- Indicadores (Dots) -->
+        <div class="carousel-dots" id="carousel-dots" role="tablist" aria-label="Selecionar produto">
+          <button class="carousel-dot active" role="tab" aria-selected="true" aria-label="Ir para produto 1: AirsoftHub"></button>
+          <button class="carousel-dot" role="tab" aria-selected="false" aria-label="Ir para produto 2: ProntoOrcei"></button>
         </div>
       </div>
     </div>
@@ -117,6 +161,7 @@
               <label class="form-label" for="assunto">Assunto</label>
               <select id="assunto" class="form-control" required>
                 <option value="Suporte AirsoftHub">Suporte - AirsoftHub App</option>
+                <option value="Suporte ProntoOrcei">Suporte - ProntoOrcei</option>
                 <option value="Dúvidas Gerais">Dúvidas Gerais / Institucional</option>
                 <option value="Parcerias">Parcerias e Negócios</option>
               </select>
