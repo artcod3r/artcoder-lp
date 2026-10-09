@@ -32,6 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4000);
   }
 
+  // Google Tag Manager dataLayer Event Tracker
+  function trackEvent(eventName, eventParams = {}) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: eventName,
+      ...eventParams
+    });
+  }
+
   // Helper para envio via API Serverless do Resend
   async function sendEmailNotification(payload) {
     try {
@@ -83,6 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.textContent = originalText;
 
       if (result.success) {
+        trackEvent('lead_form_submitted', {
+          form_id: 'form-suporte',
+          subject: assunto
+        });
         showToast('Sua mensagem foi enviada com sucesso!');
         formSuporte.reset();
       } else {
@@ -120,6 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.textContent = originalText;
 
       if (result.success) {
+        trackEvent('account_deletion_submitted', {
+          form_id: 'form-exclusao',
+          app_name: app
+        });
         showToast('Solicitação de exclusão enviada com sucesso!');
         formExclusao.reset();
       } else {
@@ -127,6 +144,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Track Outbound Product Clicks
+  document.querySelectorAll('a[href*="airsofthub.app"], a[href*="prontoorcei.com.br"]').forEach(link => {
+    link.addEventListener('click', () => {
+      const isAirsoft = link.href.includes('airsofthub');
+      trackEvent('outbound_product_click', {
+        product_name: isAirsoft ? 'AirsoftHub' : 'ProntoOrcei',
+        destination_url: link.href
+      });
+    });
+  });
 
   // Products Carousel Logic
   const carouselContainer = document.getElementById('products-carousel');
