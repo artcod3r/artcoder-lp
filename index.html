@@ -13,7 +13,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Artcoder Sistemas e Tecnologia | Engenharia de Software e Aplicativos</title>
   <meta name="description"
-    content="Engenharia de software de alta performance, microsserviços em nuvem e soluções mobile intuitivas. Desenvolvedora das plataformas AirsoftHub e ProntoOrcei.">
+    content="Engenharia de software de alta performance, microsserviços em nuvem e soluções mobile intuitivas. Desenvolvedora das plataformas AirsoftHub, ProntoOrcei e MostruárioApp.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://artcoder.com.br/">
 
@@ -21,7 +21,7 @@
   <meta property="og:locale" content="pt_BR">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Artcoder Sistemas e Tecnologia | Engenharia de Software e Aplicativos">
-  <meta property="og:description" content="Engenharia de software de alta performance, microsserviços em nuvem e soluções mobile intuitivas. Desenvolvedora das plataformas AirsoftHub e ProntoOrcei.">
+  <meta property="og:description" content="Engenharia de software de alta performance, microsserviços em nuvem e soluções mobile intuitivas. Desenvolvedora das plataformas AirsoftHub, ProntoOrcei e MostruárioApp.">
   <meta property="og:url" content="https://artcoder.com.br/">
   <meta property="og:site_name" content="Artcoder Sistemas e Tecnologia">
   <meta property="og:image" content="https://artcoder.com.br/assets/images/og-preview.png">
@@ -89,6 +89,23 @@
         },
         "description": "Aplicativo utilitário para autônomos e MEI gerarem orçamentos e recibos profissionais em PDF com assinatura digital, chave Pix e envio instantâneo via WhatsApp.",
         "url": "https://www.prontoorcei.com.br",
+        "author": {
+          "@id": "https://artcoder.com.br/#organization"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://artcoder.com.br/#mostruarioapp",
+        "name": "MostruárioApp",
+        "operatingSystem": "Android",
+        "applicationCategory": "BusinessApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL"
+        },
+        "description": "Aplicativo utilitário 100% offline para gestão de mostruários, consignações de produtos e acertos de balcão com contagem reversa e Pix offline.",
+        "url": "https://www.mostruarioapp.com.br",
         "author": {
           "@id": "https://artcoder.com.br/#organization"
         }
@@ -182,7 +199,7 @@
         <div class="carousel-track-wrapper">
           <div class="carousel-track" id="carousel-track">
             <!-- Slide 1: AirsoftHub -->
-            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="1 de 2">
+            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="1 de 3">
               <div class="product-card">
                 <div class="product-info">
                   <span class="product-tag">Mobile App (iOS / Android)</span>
@@ -198,7 +215,7 @@
             </div>
 
             <!-- Slide 2: ProntoOrcei -->
-            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="2 de 2">
+            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="2 de 3">
               <div class="product-card">
                 <div class="product-info">
                   <span class="product-tag">Mobile App (iOS / Android)</span>
@@ -208,6 +225,21 @@
                 </div>
                 <div class="product-visual">
                   <img src="assets/images/logo_prontoorcei_wo_bg.svg" alt="ProntoOrcei App" class="product-img" width="190" height="190">
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3: MostruárioApp -->
+            <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="3 de 3">
+              <div class="product-card">
+                <div class="product-info">
+                  <span class="product-tag">Mobile App (Android)</span>
+                  <h3 class="product-title">MostruárioApp</h3>
+                  <p class="product-desc">Aplicativo utilitário 100% offline para gestão de mostruários, consignações de produtos e acertos de balcão com contagem reversa e Pix offline.</p>
+                  <a href="https://www.mostruarioapp.com.br" target="_blank" rel="noopener" class="btn btn-primary">Visitar mostruarioapp.com.br ➔</a>
+                </div>
+                <div class="product-visual">
+                  <img src="assets/images/mostruarioapp.svg" alt="MostruárioApp" class="product-img" width="190" height="190">
                 </div>
               </div>
             </div>
@@ -225,6 +257,7 @@
         <div class="carousel-dots" id="carousel-dots" role="tablist" aria-label="Selecionar produto">
           <button class="carousel-dot active" role="tab" aria-selected="true" aria-label="Ir para produto 1: AirsoftHub"></button>
           <button class="carousel-dot" role="tab" aria-selected="false" aria-label="Ir para produto 2: ProntoOrcei"></button>
+          <button class="carousel-dot" role="tab" aria-selected="false" aria-label="Ir para produto 3: MostruárioApp"></button>
         </div>
       </div>
     </div>
@@ -253,6 +286,7 @@
               <select id="assunto" class="form-control" required>
                 <option value="Suporte AirsoftHub">Suporte - AirsoftHub App</option>
                 <option value="Suporte ProntoOrcei">Suporte - ProntoOrcei</option>
+                <option value="Suporte MostruárioApp">Suporte - MostruárioApp</option>
                 <option value="Dúvidas Gerais">Dúvidas Gerais / Institucional</option>
                 <option value="Parcerias">Parcerias e Negócios</option>
               </select>

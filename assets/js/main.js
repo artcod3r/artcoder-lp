@@ -146,11 +146,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Track Outbound Product Clicks
-  document.querySelectorAll('a[href*="airsofthub.app"], a[href*="prontoorcei.com.br"]').forEach(link => {
+  document.querySelectorAll('a[href*="airsofthub.app"], a[href*="prontoorcei.com.br"], a[href*="mostruarioapp.com.br"]').forEach(link => {
     link.addEventListener('click', () => {
-      const isAirsoft = link.href.includes('airsofthub');
+      let productName = 'Produto';
+      if (link.href.includes('airsofthub')) {
+        productName = 'AirsoftHub';
+      } else if (link.href.includes('prontoorcei')) {
+        productName = 'ProntoOrcei';
+      } else if (link.href.includes('mostruarioapp')) {
+        productName = 'MostruárioApp';
+      }
       trackEvent('outbound_product_click', {
-        product_name: isAirsoft ? 'AirsoftHub' : 'ProntoOrcei',
+        product_name: productName,
         destination_url: link.href
       });
     });
