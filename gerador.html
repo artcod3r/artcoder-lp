@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artcoder Post & Carousel Studio</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&family=Sora:wght@600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Libraries for Image Rendering & Zip Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+  <style>
+    :root {
+      --ui-bg: #0b0f19;
+      --ui-surface: #111827;
+      --ui-surface-2: #1e293b;
+      --ui-border: rgba(255, 255, 255, 0.1);
+      --ui-text: #f8fafc;
+      --ui-muted: #94a3b8;
+      --ui-primary: #ff6b00;
+      --ui-primary-hover: #ff8533;
+      --ui-accent: #0284c7;
+
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-code: 'Fira Code', monospace;
+      --font-logo: 'Sora', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--ui-bg);
+      color: var(--ui-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      background: var(--ui-surface);
+      border-bottom: 1px solid var(--ui-border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--ui-text);
+    }
+
+    .brand-logo {
+      font-family: var(--font-logo);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-logo span {
+      color: var(--ui-primary);
+    }
+
+    .badge-studio {
+      background: rgba(255, 107, 0, 0.15);
+      color: var(--ui-primary);
+      border: 1px solid rgba(255, 107, 0, 0.3);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--ui-border);
+      background: var(--ui-surface-2);
+      color: var(--ui-text);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: #283548;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-primary {
+      background: var(--ui-primary);
+      border-color: var(--ui-primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--ui-primary-hover);
+      border-color: var(--ui-primary-hover);
+    }
+
+    .btn-success {
+      background: #10b981;
+      border-color: #10b981;
+      color: #fff;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-icon {
+      padding: 8px;
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+
+    /* Main Workspace Layout */
+    .workspace {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 61px);
+      overflow: hidden;
+    }
+
+    /* Left Sidebar: Controls & Slide Management */
+    .sidebar {
+      width: 480px;
+      background: var(--ui-surface);
+      border-right: 1px solid var(--ui-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--ui-border);
+    }
+
+    .sidebar-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--ui-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Theme & Format Pill Selectors */
+    .selector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .pill-option {
+      cursor: pointer;
+      border: 1px solid var(--ui-border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .pill-option:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .pill-option.active {
+      border-color: var(--ui-primary);
+      background: rgba(255, 107, 0, 0.08);
+    }
+
+    .pill-title {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-desc {
+      font-size: 11px;
+      color: var(--ui-muted);
+    }
+
+    /* Custom Color Pickers */
+    .custom-colors {
+      display: none;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--ui-border);
+    }
+
+    .color-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .color-field input[type="color"] {
+      -webkit-appearance: none;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      background: none;
+    }
+
+    /* Slide Thumbnails List */
+    .slides-timeline {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
+    .slide-thumb {
+      flex: 0 0 110px;
+      height: 72px;
+      background: var(--ui-surface-2);
+      border: 2px solid var(--ui-border);
+      border-radius: 8px;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .slide-thumb:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .slide-thumb.active {
+      border-color: var(--ui-primary);
+      background: rgba(255, 107, 0, 0.1);
+    }
+
+    .thumb-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ui-muted);
+    }
+
+    .thumb-title {
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .thumb-badge {
+      font-size: 9px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1px 5px;
+      border-radius: 4px;
+      align-self: flex-start;
+    }
+
+    .slide-list-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ui-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--ui-surface-2);
+      border: 1px solid var(--ui-border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--ui-primary);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 70px;
+      line-height: 1.5;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-label input {
+      accent-color: var(--ui-primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Dynamic Card Blocks */
+    .card-block {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--ui-border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .card-block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .card-block-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ui-muted);
+    }
+
+    /* Right Preview Stage */
+    .stage {
+      flex: 1;
+      background: #060911;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+    }
+
+    /* Canvas Scaled Wrapper */
+    .canvas-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      transform-origin: center center;
+      transition: transform 0.15s ease-out;
+    }
+
+    /* THE RENDERED POST / SLIDE CANVAS (High Resolution 1080px base) */
+    #slide-canvas {
+      width: 1080px;
+      height: 1350px;
+      /* Default 4:5 */
+      background-color: #080c15;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 90px 85px 75px 85px;
+      box-sizing: border-box;
+      user-select: none;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Canvas Top Bar */
+    .canvas-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 60px;
+      z-index: 2;
+      gap: 20px;
+    }
+
+    .canvas-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      line-height: 1.2;
+      padding: 10px 24px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background-color: #38bdf8;
+      color: #080c15;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.25);
+    }
+
+    .canvas-counter {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      white-space: nowrap;
+      flex-shrink: 0;
+      line-height: 1.2;
+    }
+
+    /* Canvas Main Title */
+    .canvas-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 68px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      color: #ffffff;
+      margin-bottom: 50px;
+      z-index: 2;
+      text-wrap: balance;
+    }
+
+    /* Canvas Content Card (Reference Image Style) */
+    .canvas-card {
+      background: #111827;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      padding: 44px 50px;
+      margin-bottom: auto;
+      z-index: 2;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Thick Accent Left Bar on Card */
+    .canvas-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 14px;
+      background-color: #38bdf8;
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+    }
+
+    .canvas-section {
+      margin-bottom: 34px;
+    }
+
+    .canvas-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .canvas-section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 38px;
+      font-weight: 800;
+      color: #38bdf8;
+      margin-bottom: 14px;
+      letter-spacing: -0.5px;
+    }
+
+    .canvas-section-body {
+      font-size: 31px;
+      line-height: 1.45;
+      color: #e2e8f0;
+      font-weight: 400;
+    }
+
+    /* Layout Variant: Code Block */
+    .canvas-code-wrapper {
+      background: #0f172a;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .code-header {
+      background: #1e293b;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 10px;
+    }
+
+    .code-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+
+    .code-filename {
+      font-family: 'Fira Code', monospace;
+      font-size: 20px;
+      color: #94a3b8;
+    }
+
+    .canvas-code-content {
+      font-family: 'Fira Code', monospace;
+      font-size: 27px;
+      line-height: 1.5;
+      padding: 30px;
+      color: #38bdf8;
+      white-space: pre-wrap;
+      overflow-x: hidden;
+    }
+
+    /* Layout Variant: Capa (Big Hook) */
+    .canvas-hook-subtitle {
+      font-size: 38px;
+      line-height: 1.5;
+      color: #cbd5e1;
+      margin-bottom: 50px;
+      font-weight: 400;
+    }
+
+    .canvas-swipe-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      white-space: nowrap;
+      line-height: 1.2;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 16px 32px;
+      border-radius: 999px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-top: auto;
+      align-self: flex-start;
+    }
+
+    /* Layout Variant: CTA Final */
+    .canvas-cta-box {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 44px;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .canvas-cta-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 18px;
+    }
+
+    .canvas-cta-text {
+      font-size: 28px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+
+    .canvas-cta-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      line-height: 1.2;
+      font-family: 'Outfit', sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      padding: 16px 38px;
+      border-radius: 16px;
+      background: #ff6b00;
+      color: #ffffff;
+    }
+
+    /* Canvas Footer */
+    .canvas-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 25px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 2;
+    }
+
+    .canvas-brand-sig {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffffff;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+
+    .canvas-brand-sig span {
+      color: #ff6b00;
+    }
+
+    .canvas-author-handle {
+      font-family: 'Inter', sans-serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+
+    /* Stage Bottom Floating Toolbar */
+    .stage-toolbar {
+      position: absolute;
+      bottom: 24px;
+      background: rgba(17, 24, 39, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--ui-border);
+      border-radius: 999px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 20;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .stage-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stage-nav-text {
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 90px;
+      text-align: center;
+    }
+
+    .stage-zoom {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 1px solid var(--ui-border);
+      padding-left: 16px;
+    }
+
+    .zoom-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ui-muted);
+      min-width: 45px;
+    }
+
+    /* Modal / Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #10b981;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      z-index: 100;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Progress overlay when batch exporting */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      gap: 16px;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255, 107, 0, 0.2);
+      border-top-color: var(--ui-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .loading-sub {
+      font-size: 14px;
+      color: var(--ui-muted);
+    }
+
+    @media (max-width: 1024px) {
+      .workspace {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 550px;
+      }
+
+      .stage {
+        height: 600px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <a href="index.html" class="brand" title="Voltar ao site Artcoder">
+        <span class="brand-logo">Art<span>coder</span></span>
+        <span class="badge-studio">Studio</span>
+      </a>
+      <span style="font-size: 13px; color: var(--ui-muted); display: none; @media(min-width: 768px){display:inline}">
+        Gerador de Posts e Carrosséis Técnicos
+      </span>
+    </div>
+
+    <div class="top-actions">
+      <button class="btn" id="btn-import-json" title="Importar roteiro JSON">
+        📁 Importar
+      </button>
+      <input type="file" id="file-input-json" accept=".json" style="display: none;">
+
+      <button class="btn" id="btn-export-json" title="Exportar roteiro em JSON">
+        💾 Salvar Roteiro
+      </button>
+
+      <button class="btn" id="btn-reset" title="Carregar exemplo padrão">
+        🔄 Exemplo
+      </button>
+
+      <button class="btn btn-primary" id="btn-download-single">
+        ⬇️ Baixar Slide (PNG)
+      </button>
+
+      <button class="btn btn-success" id="btn-download-zip">
+        📦 Baixar Todos (ZIP)
+      </button>
+    </div>
+  </header>
+
+  <!-- Workspace Container -->
+  <div class="workspace">
+
+    <!-- Left Configuration Sidebar -->
+    <aside class="sidebar">
+
+      <!-- Section: Global Theme & Proportions -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">
+          <span>Estilo & Identidade Visual</span>
+        </div>
+
+        <!-- Theme Options -->
+        <div class="selector-grid">
+          <div class="pill-option active" data-theme="tech-blue" id="theme-tech-blue">
+            <div class="pill-title">
+              <span
+                style="display:inline-block; width:12px; height:12px; border-radius:50%; background:#38bdf8;"></span>
+              Tech Ciano
+            </div>
+            <div class="pill-desc">Padrão da imagem</div>
+          </div>
+
+          <div class="pill-option" data-theme="artcoder" id="theme-artcoder">
+            <div class="pill-title">
+              <span
+                style="display:inline-block; width:12px; height:12px; border-radius:50%; background:#ff6b00;"></span>
+              Artcoder
+            </div>
+            <div class="pill-desc">Laranja & Dark Slate</div>
+          </div>
+
+          <div class="pill-option" data-theme="custom" id="theme-custom">
+            <div class="pill-title">
+              <span>🎨</span> Personalizado
+            </div>
+            <div class="pill-desc">Cores customizadas</div>
+          </div>
+        </div>
+
+        <!-- Custom Color Pickers (Revealed when 'custom' is selected) -->
+        <div class="custom-colors" id="custom-colors-container">
+          <div class="color-field">
+            <input type="color" id="custom-bg" value="#0a0f1d">
+            <span>Fundo</span>
+          </div>
+          <div class="color-field">
+            <input type="color" id="custom-card" value="#111827">
+            <span>Card</span>
+          </div>
+          <div class="color-field">
+            <input type="color" id="custom-accent" value="#38bdf8">
+            <span>Destaque</span>
+          </div>
+          <div class="color-field">
+            <input type="color" id="custom-text" value="#ffffff">
+            <span>Título</span>
+          </div>
+        </div>
+
+        <!-- Aspect Ratio Selection -->
+        <div class="sidebar-title" style="margin-top: 14px;">
+          <span>Proporção do Post</span>
+        </div>
+        <div class="selector-grid">
+          <div class="pill-option active" data-ratio="4:5" id="ratio-4-5">
+            <div class="pill-title">📱 4:5 Retrato</div>
+            <div class="pill-desc">1080 x 1350px (Instagram/LinkedIn)</div>
+          </div>
+          <div class="pill-option" data-ratio="1:1" id="ratio-1-1">
+            <div class="pill-title">⏹️ 1:1 Quadrado</div>
+            <div class="pill-desc">1080 x 1080px (Feed Clássico)</div>
+          </div>
+        </div>
+
+        <!-- Branding Settings -->
+        <div class="sidebar-title" style="margin-top: 14px;">
+          <span>Marca & Rodapé</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Perfil / Arroba</label>
+            <input type="text" class="form-control" id="input-brand-handle" value="@artcoder">
+          </div>
+          <div class="form-group"
+            style="display: flex; flex-direction: column; justify-content: center; padding-top: 12px;">
+            <label class="checkbox-label">
+              <input type="checkbox" id="check-show-logo" checked>
+              <span>Exibir Logo Artcoder</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Slides Carousel Management -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">
+          <span>Slides do Carrossel (<span id="slide-total-count">1</span>)</span>
+        </div>
+
+        <!-- Horizontal Slide Thumbnails -->
+        <div class="slides-timeline" id="slides-timeline">
+          <!-- Thumbnails injected by JS -->
+        </div>
+
+        <!-- Slide Action Buttons -->
+        <div class="slide-list-actions">
+          <button class="btn btn-sm" id="btn-add-slide" title="Adicionar novo slide">
+            ➕ Novo Slide
+          </button>
+          <button class="btn btn-sm" id="btn-duplicate-slide" title="Duplicar slide atual">
+            📋 Duplicar
+          </button>
+          <button class="btn btn-sm" id="btn-move-left" title="Mover para a esquerda">
+            ⬅️ Mover
+          </button>
+          <button class="btn btn-sm" id="btn-move-right" title="Mover para a direita">
+            ➡️ Mover
+          </button>
+          <button class="btn btn-sm" id="btn-delete-slide" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);"
+            title="Excluir slide">
+            🗑️ Excluir
+          </button>
+        </div>
+      </div>
+
+      <!-- Section: Active Slide Editor -->
+      <div class="sidebar-section" style="flex: 1;">
+        <div class="sidebar-title">
+          <span>Editar Slide <span id="editor-slide-index">1</span></span>
+        </div>
+
+        <!-- Slide Layout Template Type -->
+        <div class="form-group">
+          <label class="form-label">Tipo de Slide</label>
+          <select class="form-control" id="select-slide-type">
+            <option value="content-card">Conteúdo com Card (Igual ao Exemplo)</option>
+            <option value="cover-hook">Capa / Gancho Impactante</option>
+            <option value="code-terminal">Bloco de Código / Terminal</option>
+            <option value="cta-final">Conclusão & CTA (Chamada)</option>
+          </select>
+        </div>
+
+        <!-- Top Badge & Slide Numbering -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Etiqueta de Categoria (Pill)</label>
+            <input type="text" class="form-control" id="input-tag" value="ARQUITETURA">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contador de Página</label>
+            <input type="text" class="form-control" id="input-counter" value="01/07">
+          </div>
+        </div>
+
+        <!-- Main Title / Headline -->
+        <div class="form-group">
+          <label class="form-label">Título Principal</label>
+          <textarea class="form-control" id="input-title"
+            rows="2">O que fazer se seu sistema receber 5.000 requisições na madrugada?</textarea>
+        </div>
+
+        <!-- Dynamic Content Controls based on selected slide type -->
+        <div id="dynamic-fields-container">
+          <!-- Populated by JS according to selected layout type -->
+        </div>
+
+      </div>
+
+    </aside>
+
+    <!-- Right Live Canvas Stage -->
+    <main class="stage">
+
+      <!-- Scaled Canvas Container -->
+      <div class="canvas-container" id="canvas-container">
+
+        <!-- HIGH-RES 1080px RENDERED POST CANVAS -->
+        <div id="slide-canvas">
+
+          <!-- Top Tag & Counter Header -->
+          <div class="canvas-top">
+            <div class="canvas-tag" id="canvas-tag-el">ARQUITETURA</div>
+            <div class="canvas-counter" id="canvas-counter-el">01/07</div>
+          </div>
+
+          <!-- Main Title -->
+          <div class="canvas-title" id="canvas-title-el">
+            O que fazer se seu sistema receber 5.000 requisições na madrugada?
+          </div>
+
+          <!-- Main Content Slot (Injected by JS based on slide type) -->
+          <div id="canvas-content-slot">
+            <!-- Dynamic content elements inserted here -->
+          </div>
+
+          <!-- Footer Signature Bar -->
+          <div class="canvas-footer" id="canvas-footer-el">
+            <div class="canvas-brand-sig" id="canvas-brand-sig-el">
+              Art<span>coder</span>
+            </div>
+            <div class="canvas-author-handle" id="canvas-author-handle-el">
+              @artcoder
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Stage Bottom Floating Nav & Zoom Bar -->
+      <div class="stage-toolbar">
+        <div class="stage-nav">
+          <button class="btn btn-icon btn-sm" id="btn-prev-slide" title="Slide anterior">◀</button>
+          <span class="stage-nav-text" id="stage-nav-text">1 de 5</span>
+          <button class="btn btn-icon btn-sm" id="btn-next-slide" title="Próximo slide">▶</button>
+        </div>
+
+        <div class="stage-zoom">
+          <button class="btn btn-icon btn-sm" id="btn-zoom-out" title="Diminuir zoom">-</button>
+          <span class="zoom-text" id="zoom-text">42%</span>
+          <button class="btn btn-icon btn-sm" id="btn-zoom-in" title="Aumentar zoom">+</button>
+          <button class="btn btn-sm" id="btn-zoom-fit" title="Ajustar automaticamente">Fit</button>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast" id="toast">
+    <span>✅</span> <span id="toast-msg">Mensagem</span>
+  </div>
+
+  <!-- Batch Export Progress Modal -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loading-title">Gerando imagens em alta resolução...</div>
+    <div class="loading-sub" id="loading-desc">Processando slide 1 de 5</div>
+  </div>
+
+  <script>
+    /**
+     * ARTCODER POST & CAROUSEL STUDIO
+     * Fully Client-Side High-Res Carousel Generator
+     */
+
+    // Initial Default Carousel Project State
+    const DEFAULT_PROJECT = {
+      theme: 'tech-blue', // 'tech-blue' | 'artcoder' | 'custom'
+      customColors: {
+        bg: '#0a0f1d',
+        card: '#111827',
+        accent: '#38bdf8',
+        text: '#ffffff'
+      },
+      ratio: '4:5', // '4:5' | '1:1'
+      brandHandle: '@artcoder',
+      showLogo: true,
+      activeSlideIndex: 0,
+      slides: [
+        {
+          id: 'slide-1',
+          type: 'content-card',
+          tag: 'ARQUITETURA',
+          title: 'O que fazer se seu sistema receber 5.000 requisições na madrugada?',
+          blocks: [
+            {
+              subtitle: 'Contexto & O Desafio',
+              body: 'A Sabatina Técnica: "O que você faz se, na calada da noite, o sistema receber repentinamente 5.000 atualizações concorrentes e houver risco iminente de sobrecarga antes do início da operação no dia seguinte?"'
+            },
+            {
+              subtitle: 'O Problema:',
+              body: 'Efeito manada (thundering herd) e contenção extrema de dados em acessos simultâneos.'
+            }
+          ]
+        },
+        {
+          id: 'slide-2',
+          type: 'content-card',
+          tag: 'ENGENHARIA',
+          title: 'Onde os bancos de dados tradicionais quebram sob pressão?',
+          blocks: [
+            {
+              subtitle: 'Gargalo de I/O e Locks de Tabela',
+              body: 'Transações ACID tradicionais em PostgreSQL ou MySQL entram em deadlock quando milhares de conexões disputam os mesmos registros no mesmo milissegundo.'
+            },
+            {
+              subtitle: 'O Sintoma Invisível:',
+              body: 'Pool de conexões esgotado em segundos, tempo de resposta disparando de 40ms para 15 segundos e timeout cascata nos microserviços.'
+            }
+          ]
+        },
+        {
+          id: 'slide-3',
+          type: 'code-terminal',
+          tag: 'SOLUÇÃO PRÁTICA',
+          title: 'Estratégia de Absorção: Fila Assíncrona com Backpressure',
+          filename: 'queue-consumer.go',
+          code: `// Absorção com Redis Stream + Rate Limiter
+func HandleBurst(ctx context.Context, reqs []Payload) error {
+    pipe := redisClient.Pipeline()
+    for _, item := range reqs {
+        pipe.XAdd(ctx, &redis.XAddArgs{
+            Stream: "ingress:burst:stream",
+            Values: item.ToMap(),
+        })
+    }
+    // Gravação O(1) em memória: 5k reqs processadas em 8ms!
+    _, err := pipe.Exec(ctx)
+    return err
+}`,
+          note: 'Desacople a escrita imediata em disco. Aceite o payload em memória e processe de forma cadenciada com workers dedicados.'
+        },
+        {
+          id: 'slide-4',
+          type: 'content-card',
+          tag: 'BOAS PRÁTICAS',
+          title: 'As 3 regras de ouro para resiliência de alto tráfego',
+          blocks: [
+            {
+              subtitle: '1. Rate Limiting Inteligente (Token Bucket)',
+              body: 'Defenda sua borda (Edge / API Gateway) antes que o tráfego atinja seus serviços de aplicação.'
+            },
+            {
+              subtitle: '2. Circuit Breaker Ativo',
+              body: 'Corte chamadas a serviços instáveis instantaneamente, devolvendo degradação graciosa em vez de crash geral.'
+            }
+          ]
+        },
+        {
+          id: 'slide-5',
+          type: 'cta-final',
+          tag: 'ARTCODER INSIGHTS',
+          title: 'Gostou dessa análise de arquitetura real?',
+          subtitle: 'Na Artcoder, projetamos e construímos softwares robustos, escaláveis e preparados para missões críticas.',
+          ctaTitle: 'Quer acelerar seu produto digital?',
+          ctaText: 'Compartilhe esse post com sua equipe técnica e siga nosso perfil para mais estudos de caso de engenharia de software.',
+          ctaButton: 'Siga @artcoder'
+        }
+      ]
+    };
+
+    // State object
+    let state = loadSavedState() || DEFAULT_PROJECT;
+    let currentZoom = 0.42;
+
+    // DOM Elements Cache
+    const canvasContainer = document.getElementById('canvas-container');
+    const slideCanvas = document.getElementById('slide-canvas');
+    const canvasTag = document.getElementById('canvas-tag-el');
+    const canvasCounter = document.getElementById('canvas-counter-el');
+    const canvasTitle = document.getElementById('canvas-title-el');
+    const canvasContentSlot = document.getElementById('canvas-content-slot');
+    const canvasFooter = document.getElementById('canvas-footer-el');
+    const canvasBrandSig = document.getElementById('canvas-brand-sig-el');
+    const canvasAuthorHandle = document.getElementById('canvas-author-handle-el');
+
+    // Controls
+    const slidesTimeline = document.getElementById('slides-timeline');
+    const slideTotalCount = document.getElementById('slide-total-count');
+    const editorSlideIndex = document.getElementById('editor-slide-index');
+    const stageNavText = document.getElementById('stage-nav-text');
+    const zoomText = document.getElementById('zoom-text');
+
+    // Inputs
+    const selectSlideType = document.getElementById('select-slide-type');
+    const inputTag = document.getElementById('input-tag');
+    const inputCounter = document.getElementById('input-counter');
+    const inputTitle = document.getElementById('input-title');
+    const dynamicFieldsContainer = document.getElementById('dynamic-fields-container');
+    const inputBrandHandle = document.getElementById('input-brand-handle');
+    const checkShowLogo = document.getElementById('check-show-logo');
+
+    // Colors
+    const themeTechBlue = document.getElementById('theme-tech-blue');
+    const themeArtcoder = document.getElementById('theme-artcoder');
+    const themeCustom = document.getElementById('theme-custom');
+    const customColorsContainer = document.getElementById('custom-colors-container');
+    const customBg = document.getElementById('custom-bg');
+    const customCard = document.getElementById('custom-card');
+    const customAccent = document.getElementById('custom-accent');
+    const customText = document.getElementById('custom-text');
+
+    // Ratio
+    const ratio45 = document.getElementById('ratio-4-5');
+    const ratio11 = document.getElementById('ratio-1-1');
+
+    /**
+     * INITIALIZATION
+     */
+    function init() {
+      // Validate active slide index
+      if (state.activeSlideIndex >= state.slides.length) {
+        state.activeSlideIndex = 0;
+      }
+
+      setupEventListeners();
+      renderAll();
+      autoFitZoom();
+    }
+
+    /**
+     * RENDER ALL (UI + CANVAS)
+     */
+    function renderAll() {
+      applyThemeStyles();
+      applyDimensions();
+      renderSlideCanvas();
+      renderTimelineThumbs();
+      populateEditorFields();
+      updateNavigationToolbar();
+      saveState();
+    }
+
+    /**
+     * APPLY THEME COLORS TO CANVAS
+     */
+    function applyThemeStyles() {
+      // Update theme selection pills
+      [themeTechBlue, themeArtcoder, themeCustom].forEach(el => el.classList.remove('active'));
+
+      let colors = {
+        bg: '#080c15',
+        card: '#111827',
+        accent: '#38bdf8',
+        tagText: '#080c15',
+        title: '#ffffff',
+        text: '#e2e8f0',
+        muted: '#94a3b8',
+        border: 'rgba(255, 255, 255, 0.1)',
+        cardBar: '#38bdf8'
+      };
+
+      if (state.theme === 'tech-blue') {
+        themeTechBlue.classList.add('active');
+        customColorsContainer.style.display = 'none';
+        colors = {
+          bg: '#080c15',
+          card: '#111827',
+          accent: '#38bdf8',
+          tagText: '#080c15',
+          title: '#ffffff',
+          text: '#e2e8f0',
+          muted: '#94a3b8',
+          border: 'rgba(255, 255, 255, 0.1)',
+          cardBar: '#38bdf8'
+        };
+      } else if (state.theme === 'artcoder') {
+        themeArtcoder.classList.add('active');
+        customColorsContainer.style.display = 'none';
+        colors = {
+          bg: '#0f172a',
+          card: '#1e293b',
+          accent: '#ff6b00',
+          tagText: '#ffffff',
+          title: '#ffffff',
+          text: '#f8fafc',
+          muted: '#94a3b8',
+          border: 'rgba(255, 255, 255, 0.08)',
+          cardBar: '#ff6b00'
+        };
+      } else if (state.theme === 'custom') {
+        themeCustom.classList.add('active');
+        customColorsContainer.style.display = 'grid';
+        colors = {
+          bg: state.customColors.bg,
+          card: state.customColors.card,
+          accent: state.customColors.accent,
+          tagText: '#080c15',
+          title: state.customColors.text,
+          text: '#e2e8f0',
+          muted: '#94a3b8',
+          border: 'rgba(255, 255, 255, 0.1)',
+          cardBar: state.customColors.accent
+        };
+      }
+
+      // Apply to canvas elements
+      slideCanvas.style.backgroundColor = colors.bg;
+      canvasTitle.style.color = colors.title;
+      canvasCounter.style.color = colors.muted;
+
+      // Tag Pill
+      canvasTag.style.backgroundColor = colors.accent;
+      canvasTag.style.color = colors.tagText;
+      canvasTag.style.boxShadow = `0 4px 20px ${colors.accent}40`;
+
+      // Brand Logo in Footer
+      canvasBrandSig.style.display = state.showLogo ? 'flex' : 'none';
+      canvasBrandSig.innerHTML = `Art<span style="color: ${state.theme === 'artcoder' ? '#ff6b00' : colors.accent};">coder</span>`;
+      canvasAuthorHandle.textContent = state.brandHandle;
+
+      // Store resolved colors on canvas element for sub-elements rendering
+      slideCanvas.themeColors = colors;
+    }
+
+    /**
+     * APPLY CANVAS DIMENSIONS (4:5 or 1:1)
+     */
+    function applyDimensions() {
+      if (state.ratio === '1:1') {
+        ratio11.classList.add('active');
+        ratio45.classList.remove('active');
+        slideCanvas.style.width = '1080px';
+        slideCanvas.style.height = '1080px';
+        slideCanvas.style.padding = '70px 75px 65px 75px';
+      } else {
+        ratio45.classList.add('active');
+        ratio11.classList.remove('active');
+        slideCanvas.style.width = '1080px';
+        slideCanvas.style.height = '1350px';
+        slideCanvas.style.padding = '90px 85px 75px 85px';
+      }
+    }
+
+    /**
+     * RENDER THE ACTIVE SLIDE CONTENT TO THE CANVAS
+     */
+    function renderSlideCanvas() {
+      const slide = state.slides[state.activeSlideIndex];
+      if (!slide) return;
+
+      const colors = slideCanvas.themeColors;
+
+      // Update Tag and Title
+      canvasTag.textContent = slide.tag || 'ARQUITETURA';
+
+      // Auto counter if not customized
+      const totalPadded = String(state.slides.length).padStart(2, '0');
+      const currentPadded = String(state.activeSlideIndex + 1).padStart(2, '0');
+      canvasCounter.textContent = slide.counter || `${currentPadded}/${totalPadded}`;
+      canvasTitle.textContent = slide.title || '';
+
+      // Clear Content Slot
+      canvasContentSlot.innerHTML = '';
+
+      // Render Layout by Type
+      if (slide.type === 'content-card') {
+        const card = document.createElement('div');
+        card.className = 'canvas-card';
+        card.style.backgroundColor = colors.card;
+        card.style.borderColor = colors.border;
+
+        // Custom accent bar color
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'dynamic-card-style';
+        styleSheet.innerHTML = `.canvas-card::before { background-color: ${colors.cardBar} !important; }`;
+        const oldStyle = document.getElementById('dynamic-card-style');
+        if (oldStyle) oldStyle.remove();
+        document.head.appendChild(styleSheet);
+
+        // Sections
+        if (slide.blocks && slide.blocks.length > 0) {
+          slide.blocks.forEach(b => {
+            const sec = document.createElement('div');
+            sec.className = 'canvas-section';
+
+            const h = document.createElement('div');
+            h.className = 'canvas-section-title';
+            h.style.color = colors.accent;
+            h.textContent = b.subtitle || '';
+
+            const p = document.createElement('div');
+            p.className = 'canvas-section-body';
+            p.style.color = colors.text;
+            p.textContent = b.body || '';
+
+            sec.appendChild(h);
+            sec.appendChild(p);
+            card.appendChild(sec);
+          });
+        }
+        canvasContentSlot.appendChild(card);
+
+      } else if (slide.type === 'cover-hook') {
+        const wrap = document.createElement('div');
+        wrap.style.display = 'flex';
+        wrap.style.flexDirection = 'column';
+        wrap.style.flex = '1';
+
+        if (slide.subtitle) {
+          const sub = document.createElement('div');
+          sub.className = 'canvas-hook-subtitle';
+          sub.style.color = colors.muted;
+          sub.textContent = slide.subtitle;
+          wrap.appendChild(sub);
+        }
+
+        const hint = document.createElement('div');
+        hint.className = 'canvas-swipe-hint';
+        hint.style.borderColor = `${colors.accent}40`;
+        hint.style.backgroundColor = `${colors.accent}15`;
+        hint.innerHTML = `<span style="color:${colors.accent}">Arraste para o lado</span> 👉`;
+        wrap.appendChild(hint);
+
+        canvasContentSlot.appendChild(wrap);
+
+      } else if (slide.type === 'code-terminal') {
+        const codeWrap = document.createElement('div');
+        codeWrap.className = 'canvas-code-wrapper';
+        codeWrap.style.backgroundColor = colors.card;
+        codeWrap.style.borderColor = colors.border;
+
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        header.innerHTML = `
+          <div class="code-dots">
+            <span class="code-dot" style="background:#ef4444;"></span>
+            <span class="code-dot" style="background:#f59e0b;"></span>
+            <span class="code-dot" style="background:#10b981;"></span>
+          </div>
+          <div class="code-filename">${slide.filename || 'snippet.ts'}</div>
+          <div style="width: 40px;"></div>
+        `;
+
+        const codePre = document.createElement('div');
+        codePre.className = 'canvas-code-content';
+        codePre.style.color = colors.accent;
+        codePre.textContent = slide.code || '// Insira o código aqui';
+
+        codeWrap.appendChild(header);
+        codeWrap.appendChild(codePre);
+        canvasContentSlot.appendChild(codeWrap);
+
+        if (slide.note) {
+          const noteEl = document.createElement('div');
+          noteEl.style.fontSize = '28px';
+          noteEl.style.lineHeight = '1.45';
+          noteEl.style.color = colors.muted;
+          noteEl.style.marginTop = '15px';
+          noteEl.textContent = slide.note;
+          canvasContentSlot.appendChild(noteEl);
+        }
+
+      } else if (slide.type === 'cta-final') {
+        const ctaWrap = document.createElement('div');
+        ctaWrap.className = 'canvas-cta-box';
+        ctaWrap.style.borderColor = colors.border;
+
+        ctaWrap.innerHTML = `
+          <div class="canvas-cta-title">${slide.ctaTitle || 'Gostou deste conteúdo?'}</div>
+          <div class="canvas-cta-text">${slide.ctaText || 'Compartilhe com amigos e salve para consultar mais tarde.'}</div>
+          <div class="canvas-cta-badge" style="background: ${colors.accent}; color: ${colors.tagText};">
+            ${slide.ctaButton || 'Siga o perfil'}
+          </div>
+        `;
+        canvasContentSlot.appendChild(ctaWrap);
+      }
+    }
+
+    /**
+     * RENDER TIMELINE THUMBNAILS IN SIDEBAR
+     */
+    function renderTimelineThumbs() {
+      slidesTimeline.innerHTML = '';
+      state.slides.forEach((slide, idx) => {
+        const thumb = document.createElement('div');
+        thumb.className = `slide-thumb ${idx === state.activeSlideIndex ? 'active' : ''}`;
+        thumb.innerHTML = `
+          <div class="thumb-num">${String(idx + 1).padStart(2, '0')} / ${String(state.slides.length).padStart(2, '0')}</div>
+          <div class="thumb-title">${slide.title || 'Sem título'}</div>
+          <div class="thumb-badge">${getSlideTypeLabel(slide.type)}</div>
+        `;
+        thumb.addEventListener('click', () => {
+          state.activeSlideIndex = idx;
+          renderAll();
+        });
+        slidesTimeline.appendChild(thumb);
+      });
+
+      slideTotalCount.textContent = state.slides.length;
+      editorSlideIndex.textContent = `${state.activeSlideIndex + 1} de ${state.slides.length}`;
+    }
+
+    function getSlideTypeLabel(type) {
+      switch (type) {
+        case 'content-card': return 'Card';
+        case 'cover-hook': return 'Capa';
+        case 'code-terminal': return 'Código';
+        case 'cta-final': return 'CTA';
+        default: return 'Slide';
+      }
+    }
+
+    /**
+     * POPULATE SIDEBAR EDITOR INPUTS
+     */
+    function populateEditorFields() {
+      const slide = state.slides[state.activeSlideIndex];
+      if (!slide) return;
+
+      selectSlideType.value = slide.type;
+      inputTag.value = slide.tag || '';
+
+      const totalPadded = String(state.slides.length).padStart(2, '0');
+      const currentPadded = String(state.activeSlideIndex + 1).padStart(2, '0');
+      inputCounter.value = slide.counter || `${currentPadded}/${totalPadded}`;
+      inputTitle.value = slide.title || '';
+
+      inputBrandHandle.value = state.brandHandle;
+      checkShowLogo.checked = state.showLogo;
+
+      // Populate Dynamic Sub-fields
+      renderDynamicFormFields(slide);
+    }
+
+    /**
+     * RENDER DYNAMIC FORM FIELDS FOR THE ACTIVE SLIDE TYPE
+     */
+    function renderDynamicFormFields(slide) {
+      dynamicFieldsContainer.innerHTML = '';
+
+      if (slide.type === 'content-card') {
+        const header = document.createElement('div');
+        header.style.display = 'flex';
+        header.style.justifyContent = 'space-between';
+        header.style.alignItems = 'center';
+        header.style.marginBottom = '8px';
+        header.innerHTML = `
+          <span class="form-label" style="margin:0;">Blocos de Conteúdo do Card</span>
+          <button class="btn btn-sm btn-primary" id="btn-add-block" style="padding: 2px 8px; font-size: 11px;">+ Adicionar Bloco</button>
+        `;
+        dynamicFieldsContainer.appendChild(header);
+
+        if (!slide.blocks) slide.blocks = [];
+
+        slide.blocks.forEach((block, bIdx) => {
+          const blockBox = document.createElement('div');
+          blockBox.className = 'card-block';
+          blockBox.innerHTML = `
+            <div class="card-block-header">
+              <span class="card-block-title">Bloco ${bIdx + 1}</span>
+              ${slide.blocks.length > 1 ? `<button class="btn btn-sm btn-delete-block" data-index="${bIdx}" style="padding: 1px 6px; font-size: 11px; color:#ef4444;">Remover</button>` : ''}
+            </div>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label class="form-label">Subtítulo em Destaque</label>
+              <input type="text" class="form-control input-block-subtitle" data-index="${bIdx}" value="${escapeHtml(block.subtitle || '')}">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Texto Explicativo</label>
+              <textarea class="form-control input-block-body" data-index="${bIdx}" rows="2">${escapeHtml(block.body || '')}</textarea>
+            </div>
+          `;
+          dynamicFieldsContainer.appendChild(blockBox);
+        });
+
+        // Add block listener
+        document.getElementById('btn-add-block').addEventListener('click', () => {
+          slide.blocks.push({
+            subtitle: 'Novo Tópico',
+            body: 'Descreva aqui o detalhe técnico deste ponto.'
+          });
+          renderAll();
+        });
+
+        // Block input change listeners
+        dynamicFieldsContainer.querySelectorAll('.input-block-subtitle').forEach(el => {
+          el.addEventListener('input', (e) => {
+            const idx = parseInt(e.target.dataset.index);
+            slide.blocks[idx].subtitle = e.target.value;
+            renderSlideCanvas();
+            saveState();
+          });
+        });
+
+        dynamicFieldsContainer.querySelectorAll('.input-block-body').forEach(el => {
+          el.addEventListener('input', (e) => {
+            const idx = parseInt(e.target.dataset.index);
+            slide.blocks[idx].body = e.target.value;
+            renderSlideCanvas();
+            saveState();
+          });
+        });
+
+        dynamicFieldsContainer.querySelectorAll('.btn-delete-block').forEach(el => {
+          el.addEventListener('click', (e) => {
+            const idx = parseInt(e.target.dataset.index);
+            slide.blocks.splice(idx, 1);
+            renderAll();
+          });
+        });
+
+      } else if (slide.type === 'cover-hook') {
+        dynamicFieldsContainer.innerHTML = `
+          <div class="form-group">
+            <label class="form-label">Subtítulo / Gancho da Capa</label>
+            <textarea class="form-control" id="input-cover-subtitle" rows="3">${escapeHtml(slide.subtitle || '')}</textarea>
+          </div>
+        `;
+        document.getElementById('input-cover-subtitle').addEventListener('input', (e) => {
+          slide.subtitle = e.target.value;
+          renderSlideCanvas();
+          saveState();
+        });
+
+      } else if (slide.type === 'code-terminal') {
+        dynamicFieldsContainer.innerHTML = `
+          <div class="form-group">
+            <label class="form-label">Nome do Arquivo ou Linguagem</label>
+            <input type="text" class="form-control" id="input-code-filename" value="${escapeHtml(slide.filename || 'main.ts')}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Código-Fonte</label>
+            <textarea class="form-control" id="input-code-content" rows="6" style="font-family: var(--font-code); font-size: 12px;">${escapeHtml(slide.code || '')}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nota Explicativa (abaixo do código)</label>
+            <textarea class="form-control" id="input-code-note" rows="2">${escapeHtml(slide.note || '')}</textarea>
+          </div>
+        `;
+
+        document.getElementById('input-code-filename').addEventListener('input', (e) => {
+          slide.filename = e.target.value;
+          renderSlideCanvas();
+          saveState();
+        });
+
+        document.getElementById('input-code-content').addEventListener('input', (e) => {
+          slide.code = e.target.value;
+          renderSlideCanvas();
+          saveState();
+        });
+
+        document.getElementById('input-code-note').addEventListener('input', (e) => {
+          slide.note = e.target.value;
+          renderSlideCanvas();
+          saveState();
+        });
+
+      } else if (slide.type === 'cta-final') {
+        dynamicFieldsContainer.innerHTML = `
+          <div class="form-group">
+            <label class="form-label">Título da Chamada (CTA)</label>
+            <input type="text" class="form-control" id="input-cta-title" value="${escapeHtml(slide.ctaTitle || '')}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Texto da Chamada</label>
+            <textarea class="form-control" id="input-cta-text" rows="2">${escapeHtml(slide.ctaText || '')}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Botão de Ação / Perfil</label>
+            <input type="text" class="form-control" id="input-cta-btn" value="${escapeHtml(slide.ctaButton || 'Siga @artcoder')}">
+          </div>
+        `;
+
+        document.getElementById('input-cta-title').addEventListener('input', (e) => {
+          slide.ctaTitle = e.target.value;
+          renderSlideCanvas();
+          saveState();
+        });
+
+        document.getElementById('input-cta-text').addEventListener('input', (e) => {
+          slide.ctaText = e.target.value;
+          renderSlideCanvas();
+          saveState();
+        });
+
+        document.getElementById('input-cta-btn').addEventListener('input', (e) => {
+          slide.ctaButton = e.target.value;
+          renderSlideCanvas();
+          saveState();
+        });
+      }
+    }
+
+    /**
+     * UPDATE NAVIGATION & ZOOM TOOLBAR
+     */
+    function updateNavigationToolbar() {
+      stageNavText.textContent = `${state.activeSlideIndex + 1} de ${state.slides.length}`;
+      zoomText.textContent = `${Math.round(currentZoom * 100)}%`;
+      canvasContainer.style.transform = `scale(${currentZoom})`;
+    }
+
+    /**
+     * ZOOM CALCULATIONS
+     */
+    function setZoom(val) {
+      currentZoom = Math.min(Math.max(val, 0.15), 1.0);
+      updateNavigationToolbar();
+    }
+
+    function autoFitZoom() {
+      const stage = document.querySelector('.stage');
+      const availW = stage.clientWidth - 80;
+      const availH = stage.clientHeight - 120;
+      const targetW = 1080;
+      const targetH = state.ratio === '1:1' ? 1080 : 1350;
+
+      const scaleX = availW / targetW;
+      const scaleY = availH / targetH;
+      currentZoom = Math.min(scaleX, scaleY, 0.75);
+      updateNavigationToolbar();
+    }
+
+    /**
+     * SETUP ALL EVENT LISTENERS
+     */
+    function setupEventListeners() {
+      // Theme selection
+      themeTechBlue.addEventListener('click', () => { state.theme = 'tech-blue'; renderAll(); });
+      themeArtcoder.addEventListener('click', () => { state.theme = 'artcoder'; renderAll(); });
+      themeCustom.addEventListener('click', () => { state.theme = 'custom'; renderAll(); });
+
+      // Custom Color inputs
+      customBg.addEventListener('input', (e) => { state.customColors.bg = e.target.value; renderAll(); });
+      customCard.addEventListener('input', (e) => { state.customColors.card = e.target.value; renderAll(); });
+      customAccent.addEventListener('input', (e) => { state.customColors.accent = e.target.value; renderAll(); });
+      customText.addEventListener('input', (e) => { state.customColors.text = e.target.value; renderAll(); });
+
+      // Ratio toggles
+      ratio45.addEventListener('click', () => { state.ratio = '4:5'; renderAll(); autoFitZoom(); });
+      ratio11.addEventListener('click', () => { state.ratio = '1:1'; renderAll(); autoFitZoom(); });
+
+      // Brand settings
+      inputBrandHandle.addEventListener('input', (e) => {
+        state.brandHandle = e.target.value;
+        canvasAuthorHandle.textContent = e.target.value;
+        saveState();
+      });
+
+      checkShowLogo.addEventListener('change', (e) => {
+        state.showLogo = e.target.checked;
+        canvasBrandSig.style.display = e.target.checked ? 'flex' : 'none';
+        saveState();
+      });
+
+      // Slide Core Inputs
+      selectSlideType.addEventListener('change', (e) => {
+        const slide = state.slides[state.activeSlideIndex];
+        slide.type = e.target.value;
+        if (slide.type === 'content-card' && (!slide.blocks || slide.blocks.length === 0)) {
+          slide.blocks = [{ subtitle: 'Contexto', body: 'Descreva o problema aqui...' }];
+        }
+        renderAll();
+      });
+
+      inputTag.addEventListener('input', (e) => {
+        const slide = state.slides[state.activeSlideIndex];
+        slide.tag = e.target.value;
+        canvasTag.textContent = e.target.value;
+        renderTimelineThumbs();
+        saveState();
+      });
+
+      inputCounter.addEventListener('input', (e) => {
+        const slide = state.slides[state.activeSlideIndex];
+        slide.counter = e.target.value;
+        canvasCounter.textContent = e.target.value;
+        saveState();
+      });
+
+      inputTitle.addEventListener('input', (e) => {
+        const slide = state.slides[state.activeSlideIndex];
+        slide.title = e.target.value;
+        canvasTitle.textContent = e.target.value;
+        renderTimelineThumbs();
+        saveState();
+      });
+
+      // Slide Timeline Actions
+      document.getElementById('btn-add-slide').addEventListener('click', () => {
+        const newSlide = {
+          id: 'slide-' + Date.now(),
+          type: 'content-card',
+          tag: 'ARQUITETURA',
+          title: 'Novo Ponto de Análise',
+          blocks: [
+            { subtitle: 'Diagnóstico', body: 'Insira o contexto técnico ou problema aqui.' },
+            { subtitle: 'Resolução', body: 'Insira a solução arquitetural recomendada.' }
+          ]
+        };
+        state.slides.push(newSlide);
+        state.activeSlideIndex = state.slides.length - 1;
+        renderAll();
+        showToast('Novo slide adicionado');
+      });
+
+      document.getElementById('btn-duplicate-slide').addEventListener('click', () => {
+        const current = state.slides[state.activeSlideIndex];
+        const clone = JSON.parse(JSON.stringify(current));
+        clone.id = 'slide-' + Date.now();
+        clone.title += ' (Cópia)';
+        state.slides.splice(state.activeSlideIndex + 1, 0, clone);
+        state.activeSlideIndex++;
+        renderAll();
+        showToast('Slide duplicado');
+      });
+
+      document.getElementById('btn-delete-slide').addEventListener('click', () => {
+        if (state.slides.length <= 1) {
+          alert('O carrossel precisa ter no mínimo 1 slide.');
+          return;
+        }
+        if (confirm('Tem certeza que deseja excluir este slide?')) {
+          state.slides.splice(state.activeSlideIndex, 1);
+          if (state.activeSlideIndex >= state.slides.length) {
+            state.activeSlideIndex = state.slides.length - 1;
+          }
+          renderAll();
+          showToast('Slide removido');
+        }
+      });
+
+      document.getElementById('btn-move-left').addEventListener('click', () => {
+        if (state.activeSlideIndex > 0) {
+          const temp = state.slides[state.activeSlideIndex];
+          state.slides[state.activeSlideIndex] = state.slides[state.activeSlideIndex - 1];
+          state.slides[state.activeSlideIndex - 1] = temp;
+          state.activeSlideIndex--;
+          renderAll();
+        }
+      });
+
+      document.getElementById('btn-move-right').addEventListener('click', () => {
+        if (state.activeSlideIndex < state.slides.length - 1) {
+          const temp = state.slides[state.activeSlideIndex];
+          state.slides[state.activeSlideIndex] = state.slides[state.activeSlideIndex + 1];
+          state.slides[state.activeSlideIndex + 1] = temp;
+          state.activeSlideIndex++;
+          renderAll();
+        }
+      });
+
+      // Navigation Bar Prev/Next
+      document.getElementById('btn-prev-slide').addEventListener('click', () => {
+        if (state.activeSlideIndex > 0) {
+          state.activeSlideIndex--;
+          renderAll();
+        }
+      });
+
+      document.getElementById('btn-next-slide').addEventListener('click', () => {
+        if (state.activeSlideIndex < state.slides.length - 1) {
+          state.activeSlideIndex++;
+          renderAll();
+        }
+      });
+
+      // Zoom Controls
+      document.getElementById('btn-zoom-in').addEventListener('click', () => setZoom(currentZoom + 0.05));
+      document.getElementById('btn-zoom-out').addEventListener('click', () => setZoom(currentZoom - 0.05));
+      document.getElementById('btn-zoom-fit').addEventListener('click', autoFitZoom);
+      window.addEventListener('resize', autoFitZoom);
+
+      // JSON Export & Import
+      document.getElementById('btn-export-json').addEventListener('click', exportProjectJSON);
+      document.getElementById('btn-import-json').addEventListener('click', () => {
+        document.getElementById('file-input-json').click();
+      });
+      document.getElementById('file-input-json').addEventListener('change', handleFileImportJSON);
+
+      // Reset to Default
+      document.getElementById('btn-reset').addEventListener('click', () => {
+        if (confirm('Deseja resetar o carrossel para o conteúdo de exemplo inicial?')) {
+          state = JSON.parse(JSON.stringify(DEFAULT_PROJECT));
+          renderAll();
+          autoFitZoom();
+          showToast('Conteúdo padrão restaurado!');
+        }
+      });
+
+      // Single Slide Download
+      document.getElementById('btn-download-single').addEventListener('click', downloadCurrentSlidePNG);
+
+      // Batch ZIP Download
+      document.getElementById('btn-download-zip').addEventListener('click', downloadBatchZIP);
+    }
+
+    /**
+     * EXPORT CURRENT SLIDE AS HIGH-RES PNG
+     */
+    async function downloadCurrentSlidePNG() {
+      const idx = state.activeSlideIndex;
+      const padded = String(idx + 1).padStart(2, '0');
+      const filename = `artcoder-slide-${padded}.png`;
+
+      try {
+        showToast('Renderizando imagem em alta resolução...');
+        const dataUrl = await renderSlideToPNG(slideCanvas);
+        saveAs(dataUrl, filename);
+        showToast(`Slide ${padded} baixado com sucesso!`);
+      } catch (err) {
+        console.error('Erro na exportação:', err);
+        alert('Erro ao exportar o slide. Detalhes no console.');
+      }
+    }
+
+    /**
+     * BATCH EXPORT ALL SLIDES AS ZIP
+     */
+    async function downloadBatchZIP() {
+      const overlay = document.getElementById('loading-overlay');
+      const titleEl = document.getElementById('loading-title');
+      const descEl = document.getElementById('loading-desc');
+
+      overlay.classList.add('active');
+      titleEl.textContent = 'Gerando carrossel completo em alta resolução...';
+
+      const zip = new JSZip();
+      const originalActiveIndex = state.activeSlideIndex;
+
+      try {
+        for (let i = 0; i < state.slides.length; i++) {
+          descEl.textContent = `Processando slide ${i + 1} de ${state.slides.length}`;
+          state.activeSlideIndex = i;
+          renderSlideCanvas();
+
+          // Wait a tick for DOM repaint and font glyph stabilization
+          await new Promise(r => setTimeout(r, 120));
+
+          const dataUrl = await renderSlideToPNG(slideCanvas);
+          const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
+          const filename = `slide-${String(i + 1).padStart(2, '0')}.png`;
+          zip.file(filename, base64Data, { base64: true });
+        }
+
+        descEl.textContent = 'Compactando arquivo ZIP...';
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        saveAs(zipBlob, 'artcoder-carrossel-post.zip');
+
+        showToast('Download do carrossel em ZIP concluído!');
+      } catch (err) {
+        console.error('Erro no processamento em lote:', err);
+        alert('Ocorreu um erro ao gerar as imagens em lote.');
+      } finally {
+        overlay.classList.remove('active');
+        state.activeSlideIndex = originalActiveIndex;
+        renderAll();
+      }
+    }
+
+    /**
+     * RENDER A CANVAS DOM NODE TO DATA URL
+     */
+    async function renderSlideToPNG(node) {
+      // We use htmlToImage with 1.0 pixel ratio since the node is already fixed at 1080x1350px/1080x1080px
+      const options = {
+        pixelRatio: 1,
+        width: 1080,
+        height: state.ratio === '1:1' ? 1080 : 1350,
+        cacheBust: true,
+        style: {
+          transform: 'none',
+          margin: '0',
+          left: '0',
+          top: '0'
+        }
+      };
+      return await htmlToImage.toPng(node, options);
+    }
+
+    /**
+     * JSON SCRIPT EXPORT / IMPORT
+     */
+    function exportProjectJSON() {
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute('href', dataStr);
+      dlAnchor.setAttribute('download', 'artcoder-roteiro-carrossel.json');
+      dlAnchor.click();
+      showToast('Roteiro JSON salvo!');
+    }
+
+    function handleFileImportJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported.slides && Array.isArray(imported.slides)) {
+            state = imported;
+            renderAll();
+            autoFitZoom();
+            showToast('Roteiro importado com sucesso!');
+          } else {
+            alert('Formato JSON inválido: não contém a lista de slides.');
+          }
+        } catch (err) {
+          alert('Erro ao processar arquivo JSON.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    /**
+     * PERSISTENCE (LocalStorage)
+     */
+    function saveState() {
+      try {
+        localStorage.setItem('artcoder_studio_state', JSON.stringify(state));
+      } catch (e) {
+        console.warn('LocalStorage save error:', e);
+      }
+    }
+
+    function loadSavedState() {
+      try {
+        const item = localStorage.getItem('artcoder_studio_state');
+        return item ? JSON.parse(item) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    /**
+     * TOAST HELPER
+     */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Run on startup
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+
+</html>
