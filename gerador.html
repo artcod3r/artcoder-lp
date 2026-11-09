@@ -680,19 +680,21 @@
     }
 
     .canvas-brand-sig {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 14px;
       font-family: 'Sora', sans-serif;
       font-size: 28px;
       font-weight: 800;
       color: #ffffff;
       white-space: nowrap;
       line-height: 1.2;
+      letter-spacing: -0.5px;
     }
 
     .canvas-brand-sig span {
       color: #ff6b00;
+      margin: 0;
+      padding: 0;
     }
 
     .canvas-author-handle {
@@ -1077,9 +1079,7 @@
 
           <!-- Footer Signature Bar -->
           <div class="canvas-footer" id="canvas-footer-el">
-            <div class="canvas-brand-sig" id="canvas-brand-sig-el">
-              Art<span>coder</span>
-            </div>
+            <div class="canvas-brand-sig" id="canvas-brand-sig-el">Art<span>coder</span></div>
             <div class="canvas-author-handle" id="canvas-author-handle-el">
               @artcoder
             </div>
@@ -1397,6 +1397,19 @@ func HandleBurst(ctx context.Context, reqs []Payload) error {
     }
 
     /**
+     * RICH TEXT FORMATTER (Supports **bold**, *italic*, ==accent color==, `code` and line breaks)
+     */
+    function formatRichText(text, accentColor) {
+      if (!text) return '';
+      return escapeHtml(text)
+        .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #ffffff; font-weight: 800;">$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/==(.*?)==/g, `<span style="color: ${accentColor}; font-weight: 700;">$1</span>`)
+        .replace(/`([^`]+)`/g, `<code style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; font-family: var(--font-code); font-size: 0.9em; color: ${accentColor};">$1</code>`)
+        .replace(/\n/g, '<br>');
+    }
+
+    /**
      * RENDER THE ACTIVE SLIDE CONTENT TO THE CANVAS
      */
     function renderSlideCanvas() {
@@ -1412,7 +1425,21 @@ func HandleBurst(ctx context.Context, reqs []Payload) error {
       const totalPadded = String(state.slides.length).padStart(2, '0');
       const currentPadded = String(state.activeSlideIndex + 1).padStart(2, '0');
       canvasCounter.textContent = slide.counter || `${currentPadded}/${totalPadded}`;
-      canvasTitle.textContent = slide.title || '';
+
+      // Intelligent title sizing based on length to prevent layout crushing
+      const titleLen = (slide.title || '').length;
+      if (titleLen > 110) {
+        canvasTitle.style.fontSize = '46px';
+        canvasTitle.style.marginBottom = '30px';
+      } else if (titleLen > 70) {
+        canvasTitle.style.fontSize = '56px';
+        canvasTitle.style.marginBottom = '38px';
+      } else {
+        canvasTitle.style.fontSize = '68px';
+        canvasTitle.style.marginBottom = '50px';
+      }
+
+      canvasTitle.innerHTML = formatRichText(slide.title || '', colors.accent);
 
       // Clear Content Slot
       canvasContentSlot.innerHTML = '';
@@ -1432,21 +1459,32 @@ func HandleBurst(ctx context.Context, reqs []Payload) error {
         if (oldStyle) oldStyle.remove();
         document.head.appendChild(styleSheet);
 
+        // Dynamic padding based on block count
+        const blockCount = (slide.blocks || []).length;
+        if (blockCount >= 3) {
+          card.style.padding = '32px 42px';
+        } else {
+          card.style.padding = '44px 50px';
+        }
+
         // Sections
         if (slide.blocks && slide.blocks.length > 0) {
           slide.blocks.forEach(b => {
             const sec = document.createElement('div');
             sec.className = 'canvas-section';
+            if (blockCount >= 3) sec.style.marginBottom = '22px';
 
             const h = document.createElement('div');
             h.className = 'canvas-section-title';
             h.style.color = colors.accent;
-            h.textContent = b.subtitle || '';
+            if (blockCount >= 3) h.style.fontSize = '32px';
+            h.innerHTML = formatRichText(b.subtitle || '', colors.accent);
 
             const p = document.createElement('div');
             p.className = 'canvas-section-body';
             p.style.color = colors.text;
-            p.textContent = b.body || '';
+            if (blockCount >= 3) p.style.fontSize = '27px';
+            p.innerHTML = formatRichText(b.body || '', colors.accent);
 
             sec.appendChild(h);
             sec.appendChild(p);
@@ -1465,7 +1503,7 @@ func HandleBurst(ctx context.Context, reqs []Payload) error {
           const sub = document.createElement('div');
           sub.className = 'canvas-hook-subtitle';
           sub.style.color = colors.muted;
-          sub.textContent = slide.subtitle;
+          sub.innerHTML = formatRichText(slide.subtitle, colors.accent);
           wrap.appendChild(sub);
         }
 
@@ -1492,7 +1530,7 @@ func HandleBurst(ctx context.Context, reqs []Payload) error {
             <span class="code-dot" style="background:#f59e0b;"></span>
             <span class="code-dot" style="background:#10b981;"></span>
           </div>
-          <div class="code-filename">${slide.filename || 'snippet.ts'}</div>
+          <div class="code-filename">${escapeHtml(slide.filename || 'snippet.ts')}</div>
           <div style="width: 40px;"></div>
         `;
 
@@ -1511,7 +1549,7 @@ func HandleBurst(ctx context.Context, reqs []Payload) error {
           noteEl.style.lineHeight = '1.45';
           noteEl.style.color = colors.muted;
           noteEl.style.marginTop = '15px';
-          noteEl.textContent = slide.note;
+          noteEl.innerHTML = formatRichText(slide.note, colors.accent);
           canvasContentSlot.appendChild(noteEl);
         }
 
@@ -1521,10 +1559,10 @@ func HandleBurst(ctx context.Context, reqs []Payload) error {
         ctaWrap.style.borderColor = colors.border;
 
         ctaWrap.innerHTML = `
-          <div class="canvas-cta-title">${slide.ctaTitle || 'Gostou deste conteúdo?'}</div>
-          <div class="canvas-cta-text">${slide.ctaText || 'Compartilhe com amigos e salve para consultar mais tarde.'}</div>
+          <div class="canvas-cta-title">${formatRichText(slide.ctaTitle || 'Gostou deste conteúdo?', colors.accent)}</div>
+          <div class="canvas-cta-text">${formatRichText(slide.ctaText || 'Compartilhe com amigos e salve para consultar mais tarde.', colors.accent)}</div>
           <div class="canvas-cta-badge" style="background: ${colors.accent}; color: ${colors.tagText};">
-            ${slide.ctaButton || 'Siga o perfil'}
+            ${escapeHtml(slide.ctaButton || 'Siga o perfil')}
           </div>
         `;
         canvasContentSlot.appendChild(ctaWrap);
