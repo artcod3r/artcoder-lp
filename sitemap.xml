@@ -1,27 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Home -->
   <url>
     <loc>https://artcoder.com.br/</loc>
-    <lastmod>2026-10-09</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/" />
   </url>
+  <url>
+    <loc>https://artcoder.com.br/en/</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/" />
+  </url>
+  <url>
+    <loc>https://artcoder.com.br/es/</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/" />
+  </url>
+
+  <!-- Privacy Policy -->
   <url>
     <loc>https://artcoder.com.br/privacidade.html</loc>
-    <lastmod>2026-10-09</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/privacidade.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/privacidad.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/privacidade.html" />
   </url>
+  <url>
+    <loc>https://artcoder.com.br/en/privacy.html</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/privacidade.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/privacidad.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/privacidade.html" />
+  </url>
+  <url>
+    <loc>https://artcoder.com.br/es/privacidad.html</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/privacidade.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/privacidad.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/privacidade.html" />
+  </url>
+
+  <!-- Terms of Use -->
   <url>
     <loc>https://artcoder.com.br/termos.html</loc>
-    <lastmod>2026-10-09</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/termos.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/terms.html" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/terminos.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/termos.html" />
   </url>
   <url>
-    <loc>https://artcoder.com.br/exclusao-de-conta.html</loc>
-    <lastmod>2026-10-09</lastmod>
+    <loc>https://artcoder.com.br/en/terms.html</loc>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/termos.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/terms.html" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/terminos.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/termos.html" />
+  </url>
+  <url>
+    <loc>https://artcoder.com.br/es/terminos.html</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/termos.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/terms.html" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/terminos.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/termos.html" />
+  </url>
+
+  <!-- Account Deletion -->
+  <url>
+    <loc>https://artcoder.com.br/exclusao-de-conta.html</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/exclusao-de-conta.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/account-deletion.html" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/eliminacion-de-cuenta.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/exclusao-de-conta.html" />
+  </url>
+  <url>
+    <loc>https://artcoder.com.br/en/account-deletion.html</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/exclusao-de-conta.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/account-deletion.html" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/eliminacion-de-cuenta.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/exclusao-de-conta.html" />
+  </url>
+  <url>
+    <loc>https://artcoder.com.br/es/eliminacion-de-cuenta.html</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://artcoder.com.br/exclusao-de-conta.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://artcoder.com.br/en/account-deletion.html" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://artcoder.com.br/es/eliminacion-de-cuenta.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://artcoder.com.br/exclusao-de-conta.html" />
   </url>
 </urlset>

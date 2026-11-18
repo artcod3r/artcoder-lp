@@ -1,6 +1,39 @@
 // Artcoder Main Client Logic & Resend API Integration
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Localized UI messages based on <html lang="...">
+  const htmlLang = (document.documentElement.lang || 'pt-BR').toLowerCase();
+  const langKey = htmlLang.startsWith('en') ? 'en' : htmlLang.startsWith('es') ? 'es' : 'pt';
+  const i18n = {
+    pt: {
+      sending: 'Enviando...',
+      supportSuccess: 'Sua mensagem foi enviada com sucesso!',
+      supportError: 'Erro ao enviar. Envie diretamente para artcoder@artcoder.com.br',
+      sendingDeletion: 'Enviando solicitação...',
+      notProvided: 'Não informado',
+      deletionSuccess: 'Solicitação de exclusão enviada com sucesso!',
+      deletionError: 'Erro ao enviar. Envie e-mail para artcoder@artcoder.com.br'
+    },
+    en: {
+      sending: 'Sending...',
+      supportSuccess: 'Your message has been sent successfully!',
+      supportError: 'Failed to send. Please email artcoder@artcoder.com.br directly',
+      sendingDeletion: 'Sending request...',
+      notProvided: 'Not provided',
+      deletionSuccess: 'Account deletion request sent successfully!',
+      deletionError: 'Failed to send. Please email artcoder@artcoder.com.br'
+    },
+    es: {
+      sending: 'Enviando...',
+      supportSuccess: '¡Tu mensaje ha sido enviado con éxito!',
+      supportError: 'Error al enviar. Escríbenos directamente a artcoder@artcoder.com.br',
+      sendingDeletion: 'Enviando solicitud...',
+      notProvided: 'No informado',
+      deletionSuccess: '¡Solicitud de eliminación enviada con éxito!',
+      deletionError: 'Error al enviar. Envía un correo a artcoder@artcoder.com.br'
+    }
+  }[langKey];
+
   // Mobile Menu Toggle
   const menuToggle = document.getElementById('menu-toggle');
   const navMenu = document.getElementById('nav-menu');
@@ -72,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const originalText = submitBtn.textContent;
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Enviando...';
+      submitBtn.textContent = i18n.sending;
 
       const nome = document.getElementById('nome').value;
       const email = document.getElementById('email').value;
@@ -96,10 +129,10 @@ document.addEventListener('DOMContentLoaded', () => {
           form_id: 'form-suporte',
           subject: assunto
         });
-        showToast('Sua mensagem foi enviada com sucesso!');
+        showToast(i18n.supportSuccess);
         formSuporte.reset();
       } else {
-        showToast('Erro ao enviar. Envie diretamente para artcoder@artcoder.com.br', true);
+        showToast(i18n.supportError, true);
       }
     });
   }
@@ -113,12 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const originalText = submitBtn.textContent;
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Enviando solicitação...';
+      submitBtn.textContent = i18n.sendingDeletion;
 
       const nome = document.getElementById('exclusao-nome').value;
       const email = document.getElementById('exclusao-email').value;
       const app = document.getElementById('exclusao-app').value;
-      const motivo = document.getElementById('exclusao-motivo').value || 'Não informado';
+      const motivo = document.getElementById('exclusao-motivo').value || i18n.notProvided;
 
       const result = await sendEmailNotification({
         title: `SOLICITAÇÃO DE EXCLUSÃO DE CONTA - ${app}`,
@@ -137,10 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
           form_id: 'form-exclusao',
           app_name: app
         });
-        showToast('Solicitação de exclusão enviada com sucesso!');
+        showToast(i18n.deletionSuccess);
         formExclusao.reset();
       } else {
-        showToast('Erro ao enviar. Envie e-mail para artcoder@artcoder.com.br', true);
+        showToast(i18n.deletionError, true);
       }
     });
   }

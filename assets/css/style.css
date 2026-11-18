@@ -105,6 +105,48 @@ body {
   cursor: pointer;
 }
 
+/* Navbar Actions & Language Switcher */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+
+.lang-switcher a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 2px 5px;
+  border-radius: 4px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.lang-switcher a:hover {
+  color: var(--primary-orange);
+}
+
+.lang-switcher a.active {
+  color: var(--text-primary);
+  background: rgba(255, 107, 0, 0.2);
+}
+
+.lang-switcher .lang-sep {
+  color: rgba(148, 163, 184, 0.35);
+  user-select: none;
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
